@@ -19,7 +19,7 @@ class BlogController extends Controller
 
             return view('blogs.create', compact('categories'));
         } catch (\Exception $e) {
-            return redirect('/create-blog', 500)->with('error', 'Something went wrong while fetching blogs. Please try again later');
+            return redirect('/create-blog')->with('error', 'Something went wrong while fetching blogs. Please try again later');
         }
     }
 
@@ -65,7 +65,6 @@ class BlogController extends Controller
             return redirect('/create-blog')->with('success', 'Blog posted successfully');
             // return response()->json(['success' => 'Blog posted successfully']);
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return redirect()->with('error', 'Something went wrong while posting blog. Please try again later');
             // return response('/create-blog')->json(['error' => 'Something went wrong while posting blogs. Please try again later']);
         }
@@ -109,8 +108,7 @@ class BlogController extends Controller
                 // return response()->json($blogs);
             }
         } catch (\Exception $e) {
-            dd($e->getMessage());
-            return redirect('/blogs', 500)->with('error', 'Something went wrong while fetching blogs. Please try again later');
+            return redirect('/blogs')->with('error', 'Something went wrong while fetching blogs. Please try again later');
             // return response()->json(['error' => 'Something went wrong while fetching blogs. Please try again later']);
         }
     }
@@ -119,7 +117,7 @@ class BlogController extends Controller
     {
         $blogId = $request->query('blog_id');
         if (!$blogId) {
-            return redirect('/blogs', 400)->with('error', 'Select one blog to preview');
+            return redirect('/blogs')->with('error', 'Select one blog to preview');
         }
 
         try {
@@ -132,13 +130,12 @@ class BlogController extends Controller
                 ->first();
 
             if (!$blogExists) {
-                return redirect('/blogs', 404)->with('error', 'Blog does not exists or disabled');
+                return redirect('/blogs')->with('error', 'Blog does not exists or disabled');
             }
 
             return view('blogs.preview', compact('blogExists'));
         } catch (\Exception $e) {
-            dd($e->getMessage());
-            return redirect('/blogs', 500)->with('error', 'Something went wrong while previewing blog. Please try again later');
+            return redirect('/blogs')->with('error', 'Something went wrong while previewing blog. Please try again later');
         }
     }
 
@@ -157,8 +154,7 @@ class BlogController extends Controller
 
             return view('blogs.edit', compact('categories', 'blog'));
         } catch (\Exception $e) {
-            dd($e->getMessage());
-            return redirect('/edit-blog/' + $blogId, 500)->with('error', 'Something went wrong while fetching blogs. Please try again later');
+            return redirect('/edit-blog/' + $blogId)->with('error', 'Something went wrong while fetching blogs. Please try again later');
         }
     }
 
@@ -174,7 +170,7 @@ class BlogController extends Controller
         // $loggedInUser = Auth::user()->id;
 
         if (!$blogId) {
-            return redirect('/edit-blog?id='.$blogId)->with('error', 'Select one blog to update');
+            return redirect('/')->with('error', 'Select one blog to update');
         }
 
         // if (!$blogAuthorId) {
@@ -194,7 +190,7 @@ class BlogController extends Controller
         }
 
         if (!$blogDesc) {
-            return redirect('/edit-blog?id='.$blogId)->with('desc', 'Blog description is required!!');
+            return redirect('/edit-blog?id='.$blogId)->with('desc-error', 'Blog description is required!!');
         }
 
         try {
