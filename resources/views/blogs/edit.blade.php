@@ -36,7 +36,9 @@
 
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Edit Blog</h5>
+                <h5 class="card-title fw-semibold mb-4">Edit Blog</h5> 
+                @if(session('error')) <span class="text-danger" style="font-size:0.9rem;">{{session('error')}}</span>@endif
+                @if(session('success')) <span class="text-success" style="font-size:0.9rem;">{{session('success')}}</span>@endif
                 <div class="card">
                     <div class="card-body">
                         <form method="POST" action="{{ route('blog.edit', $blog->id) }}">
@@ -44,20 +46,20 @@
                             <input type="hidden" name="blog_id" placeholder="Enter title" value="{{ $blog->id }}"
                                 style="margin:1rem 0; padding: 0.2rem 0.5rem;" />
                             <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Title</label>
+                                <label for="exampleInputEmail1" class="form-label">Title</label>  @if(session('title-error')) <span class="text-danger" style="font-size:0.9rem;">{{session('title-error')}}</span>@endif
                                 <input type="text" name="title"  value="{{ $blog->title }}" class="form-control" id="exampleInputEmail1"
                                     aria-describedby="emailHelp">
                             </div>
                             <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Description</label>
+                                <label for="exampleInputPassword1" class="form-label">Description</label>  @if(session('desc-error')) <span class="text-danger" style="font-size:0.9rem;">{{session('desc-error')}}</span>@endif
                                 <textarea name="description" class="form-control" id="exampleInputPassword1">{{ $blog->description }}</textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Image Url</label>
+                                <label for="exampleInputPassword1" class="form-label">Image Url</label> @if(session('image-error'))<span class="text-danger" style="font-size:0.9rem;">{{session('image-error')}}</span>@endif
                                 <input type="text" name="img_path"  value="{{ $blog->img_path }}" class="form-control" id="exampleInputPassword1">
                             </div>
                             <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Category</label>
+                                <label for="exampleInputPassword1" class="form-label">Category</label> @if(session('category-error')) <span class="text-danger" style="font-size:0.9rem;">{{session('category-error')}}</span>@endif
                                 @if ($categories)
                                     <select name="category_id" class="form-control" value="{{ $blog->category_id }}"
                                         style="padding: 0.5rem 1rem;">
@@ -68,6 +70,7 @@
                                         @endforeach
                                     </select>
                                 @endif
+                                @if(session('category-error'))<p class="text-danger">{{session('category-error')}}</p>@endif
                             </div>
                             <button type="submit" class="btn btn-primary rounded">Update</button>
                         </form>

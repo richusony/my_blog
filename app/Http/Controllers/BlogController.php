@@ -33,11 +33,19 @@ class BlogController extends Controller
 
         // dd($blogTitle, $blogDesc, $blogImg, $blogCategory);
         if (!$blogTitle) {
-            return redirect('/create-blog')->with('error', 'Blog title is required!!');
+            return redirect('/create-blog')->with('title-error', 'Blog title is required!!');
         }
 
         if (!$blogDesc) {
-            return redirect('/create-blog')->with('error', 'Blog description is required!!');
+            return redirect('/create-blog')->with('desc-error', 'Blog description is required!!');
+        }
+
+        if(!$blogImg){
+            return redirect('/create-blog')->with('image-error', 'Blog image url is required!!');
+        }
+
+        if(!$blogCategory){
+            return redirect('/create-blog')->with('image-error', 'Blog category is required!!');
         }
 
         try {
@@ -166,7 +174,7 @@ class BlogController extends Controller
         // $loggedInUser = Auth::user()->id;
 
         if (!$blogId) {
-            return redirect()->with('error', 'Select one blog to update');
+            return redirect('/edit-blog?id='.$blogId)->with('error', 'Select one blog to update');
         }
 
         // if (!$blogAuthorId) {
@@ -178,21 +186,21 @@ class BlogController extends Controller
         // }
 
         if (!$blogCategoryId) {
-            return redirect()->with('error', 'Blog Category is required!!');
+            return redirect('/edit-blog?id='.$blogId)->with('category-error', 'Blog Category is required!!');
         }
 
         if (!$blogTitle) {
-            return redirect()->with('error', 'Blog title is required!!');
+            return redirect('/edit-blog?id='.$blogId)->with('title-error', 'Blog title is required!!');
         }
 
         if (!$blogDesc) {
-            return redirect()->with('error', 'Blog description is required!!');
+            return redirect('/edit-blog?id='.$blogId)->with('desc', 'Blog description is required!!');
         }
 
         try {
             $categoryExists = DB::table('categories')->where('id', $blogCategoryId);
             if (!$categoryExists) {
-                return redirect()->with('error', 'Selected Category is not valid!!');
+                return redirect('/edit-blog?id='.$blogId)->with('error', 'Selected Category is not valid!!');
             }
 
             $blog = Blog::find($blogId);
@@ -206,7 +214,6 @@ class BlogController extends Controller
 
             return redirect('/edit-blog?id=' . $blogId)->with('success', 'Updated blog successfully!!');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return redirect('/edit-blog?id=' . $blogId)->with('error', 'Something went wrong while updating blog. Please try again later');
             // return response()->json(['error' => 'Something went wrong while updating blogs. Please try again later']);
         }
@@ -238,10 +245,10 @@ class BlogController extends Controller
             $blog->deleted_status = 1;
             $blog->save();
 
-            return redirect()->with('success', 'Deleted blog successfully!!');
+            return redirect('/')->with('success', 'Deleted blog successfully!!');
         } catch (\Exception $e) {
             return redirect('/')->with('error', 'Something went wrong while deleting blog. Please try again later');
             // return response()->json(['error' => 'Something went wrong while deleting blogs. Please try again later']);
         }
     }
-}
+}   

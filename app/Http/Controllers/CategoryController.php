@@ -14,7 +14,7 @@ class CategoryController extends Controller
     {
         $category_name = $request->category_name;
         if (!$category_name) {
-            return response()->json(['error' => 'Category name is required!!']);
+            return redirect('/categories')->with('error', 'Category name is required!!');
         }
 
         try {
@@ -23,7 +23,7 @@ class CategoryController extends Controller
 
             if ($categoryExists) {
                 // return response()->json(['error' => 'Category name already exists!!']);
-                return redirect('/categories', 400)->with('error', 'Category name already exists!!');
+                return redirect('/categories')->with('category-error', 'Category name already exists!!');
             }
 
             $category = new Category();
@@ -31,7 +31,7 @@ class CategoryController extends Controller
             $category->name = $category_name;
             $category->save();
             // return response()->json(['success' => 'Category has been created successfully']);
-            return redirect('/categories', 201)->with('success', 'Category has been created successfully!!');
+            return redirect('/categories')->with('success', 'Category has been created successfully!!');
         } catch (\Exception $e) {
             // return response(500)->json(['error' => 'Something went wrong while creating category. Please try again later']);
             return redirect('/categories')->with('error', 'Something went wrong while creating category. Please try again later!!');
@@ -79,7 +79,6 @@ class CategoryController extends Controller
 
             return redirect("/categories")->with('success', 'Disabled categories');
         } catch (\Exception $e) {
-            dd($e);
             return redirect("/categories")->with('error', 'Something went wrong while disabling category. Please try again later');
         }
     }
