@@ -45,7 +45,7 @@ class BlogController extends Controller
         }
 
         if(!$blogCategory){
-            return redirect('/create-blog')->with('image-error', 'Blog category is required!!');
+            return redirect('/create-blog')->with('category-error', 'Blog category is required!!');
         }
 
         try {
@@ -65,16 +65,16 @@ class BlogController extends Controller
             return redirect('/create-blog')->with('success', 'Blog posted successfully');
             // return response()->json(['success' => 'Blog posted successfully']);
         } catch (\Exception $e) {
-            return redirect()->with('error', 'Something went wrong while posting blog. Please try again later');
+            return redirect('/create-blog')->with('error', 'Something went wrong while posting blog. Please try again later');
             // return response('/create-blog')->json(['error' => 'Something went wrong while posting blogs. Please try again later']);
         }
     }
 
     // Get All Blogs
     public function getBlogs(Request $request)
-    {
+    {  
         $categoryId = $request->query('cat');
-
+       
         try {
             $categories = DB::table('categories')->get();
             $query = DB::table('blogs')
@@ -82,7 +82,8 @@ class BlogController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'blogs.author_id')
                 ->where('blogs.deleted_status', 0)
                 ->where('categories.status', 0);
-
+            
+            
             if ($categoryId) {
 
                 $categoryExists = DB::table('categories')->where('id', $categoryId);
@@ -96,19 +97,18 @@ class BlogController extends Controller
                     ->where('categories.id', $categoryId)
                     ->get();
 
-
-                return view('blogs', compact('blogs', 'categories'));
+                return view('blogs', compact('blogs', 'categories', 'categoryId'));
             } else {
                 $blogs = $query
                     ->orderByDesc('created_at')
                     ->select('blogs.*', 'categories.name', 'users.name')
                     ->get();
 
-                return view('blogs', compact('blogs', 'categories'));
+                return view('blogs', compact('blogs', 'categories', 'categoryId'));
                 // return response()->json($blogs);
             }
         } catch (\Exception $e) {
-            return redirect('/blogs')->with('error', 'Something went wrong while fetching blogs. Please try again later');
+            return redirect('/')->with('error', 'Something went wrong while fetching blogs. Please try again later');
             // return response()->json(['error' => 'Something went wrong while fetching blogs. Please try again later']);
         }
     }
@@ -117,7 +117,7 @@ class BlogController extends Controller
     {
         $blogId = $request->query('blog_id');
         if (!$blogId) {
-            return redirect('/blogs')->with('error', 'Select one blog to preview');
+            return redirect('/')->with('error', 'Select one blog to preview');
         }
 
         try {
@@ -126,16 +126,17 @@ class BlogController extends Controller
                 ->leftJoin('users', 'users.id', '=', 'blogs.author_id')
                 ->where('blogs.id', $blogId)
                 ->where('blogs.deleted_status', 0)
+                ->where('categories.status', 0)
                 ->select('blogs.*', 'users.name as author_name', 'categories.name as category_name')
                 ->first();
 
             if (!$blogExists) {
-                return redirect('/blogs')->with('error', 'Blog does not exists or disabled');
+                return redirect('/')->with('error', 'Blog does not exists or disabled');
             }
 
             return view('blogs.preview', compact('blogExists'));
         } catch (\Exception $e) {
-            return redirect('/blogs')->with('error', 'Something went wrong while previewing blog. Please try again later');
+            return redirect('/')->with('error', 'Something went wrong while previewing blog. Please try again later');
         }
     }
 
@@ -233,10 +234,6 @@ class BlogController extends Controller
         // }
 
         try {
-            // DB::table('blogs')
-            //     ->where('id', $blogId)
-            //     ->update(['status' => 1]);
-
             $blog = Blog::find($blogId);
             $blog->deleted_status = 1;
             $blog->save();

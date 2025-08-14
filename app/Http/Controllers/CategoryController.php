@@ -77,7 +77,7 @@ class CategoryController extends Controller
 
             $category->save();
 
-            return redirect("/categories")->with('success', 'Disabled categories');
+            return redirect("/categories")->with('success', 'Status updated successfully');
         } catch (\Exception $e) {
             return redirect("/categories")->with('error', 'Something went wrong while disabling category. Please try again later');
         }
